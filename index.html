@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@S__Makky" />
+    <meta property="og:url" content="記事のURL" />
+    <meta property="og:title" content="Typingoon" />
+    <meta property="og:description" content="スプラトゥーン風のタイピングゲームです。塗られたペイントをタイピングをして塗りかえして競います。タイピングをゲーム感覚で練習してみましょう。" />
+    <meta property="og:image" content="img/tw-card.png" />
+    <title>Typingoon</title>
+    <meta name="description" content="スプラトゥーン風のタイピングゲームです。塗られたペイントをタイピングをして塗りかえして遊びます。タイピングをゲーム感覚で練習してみましょう。" />
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+
+    <header class="container">
+      <section>
+        <h1>スプラトゥーンふうのタイピングゲームだよ</h1>
+        <p>いかゲーふうのタイピングゲームをつくってみたよ。もくひょうは50%いじょうだ。がんばってくれよな。ひらがなばっかでみにくいって？フォントがなかったんだ。ゆるしてくれ！†</p>
+        <p>したにあるちゅういじこうもよくよんでおくといいぞ</p>
+      </section>
+      <div class="logo">
+        Typingoon
+      </div>
+    </header>
+
+    <main>
+      <article class="container" id="gameContainer">
+
+        <div id="timer">30</div>
+        <div id="targetWrap">
+          <div id="startmodal" class="modal">
+            <div id="start">
+              <p>スタート</p>
+              <p>クリック or スペースキー</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="finish-modal modal" id="finishModal">
+          <div class="finish-tape" id="f1">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape" id="f2">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape" id="f3">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape" id="f4">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+        </div>
+
+        <div class="modal" id="resultModal">
+          <div id="retry">
+            <p>リトライ</p>
+            <p>クリック or スペースキー</p>
+          </div>
+          <div id="bar">
+            <div id="hit">
+              0%
+            </div>
+            <div id="left">
+              0%
+            </div>
+          </div>
+        </div>
+
+        <div class="sp">
+          <p>※画面幅が足りません。<br>パソコンの画面で開いてください</p>
+        </div>
+
+      </article>
+
+      <section class="container notes">
+        <h2>ちゅういじこう</h2>
+        <p>プレイするまえによんでおいてね</p>
+        <ul>
+          <li>ローマじはひょうじされているモジしかセイカイにならないよ。</li>
+          <li>「しょ」などは「sho」とうつことはできないよ。</li>
+          <li>すこしのふぐあいはミナカッタことにして！</li>
+          <li>Google Chrome しかたいおうしてないよ。</li>
+        </ul>
+      </section>
+
+    </main>
+
+
+    <footer class="container">
+      &copy; 2019 MakioShimomura
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
