@@ -31,8 +31,8 @@
 
         <div id="timer">30</div>
         <div id="targetWrap">
-          <div id="startmodal" class="modal">
-            <div id="start">
+          <div class="modal startmodal">
+            <div id="startBtn">
               <p>スタート</p>
               <p>クリック or スペースキー</p>
             </div>
@@ -40,22 +40,22 @@
         </div>
 
         <div class="finish-modal modal" id="finishModal">
-          <div class="finish-tape" id="f1">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
-          <div class="finish-tape" id="f2">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
-          <div class="finish-tape" id="f3">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
-          <div class="finish-tape" id="f4">finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape finish-tape-1" id='finishTape'>finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape finish-tape-2" id='finishTape'>finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape finish-tape-3" id='finishTape'>finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
+          <div class="finish-tape finish-tape-4" id='finishTape'>finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　finish!　　　</div>
         </div>
 
         <div class="modal" id="resultModal">
-          <div id="retry">
+          <div id="retryBtn">
             <p>リトライ</p>
             <p>クリック or スペースキー</p>
           </div>
           <div id="bar">
-            <div id="hit">
+            <div id="success">
               0%
             </div>
-            <div id="left">
+            <div id="remained">
               0%
             </div>
           </div>
@@ -80,6 +80,12 @@
 
     </main>
 
+    <div class="target" data-target-id="[4]" style="background-image: url(&quot;img/pink[5].png&quot;); top: [192.078]px; left: [130.803]px;">
+      <p class="hira-target">[あかぺん]</p>
+      <p class="roma-target">
+        <span class="remain-word">[akapenn]</span>
+      </p>
+    </div>
 
     <footer class="container">
       &copy; 2019 MakioShimomura

@@ -1,12 +1,19 @@
+/* ===================================================== */
+/* フォントの読み込み */
+/* ===================================================== */
 @font-face {
     font-family: 'Paintball_Beta_4a';
     src: url('../font/Paintball_Beta_4a.otf');
 }
+
 @font-face {
     font-family: 'ikamodoki1_0';
     src: url('../font/ikamodoki1_0.ttf');
 }
 
+/* ===================================================== */
+/* サイトの大枠（ゲーム以外の部分） */
+/* ===================================================== */
 body {
   margin: 50px 0 0;
   padding: 0;
@@ -55,9 +62,9 @@ header h1{
   margin: 0 auto;
 }
 
-
-
-/* ---------------------------------------------- */
+/* ===================================================== */
+/* ゲーム部分 */
+/* ===================================================== */
 
 #gameContainer {
   height: 85vh;
@@ -84,16 +91,16 @@ header h1{
   display: inline-block;
   line-height: 45px;
   border-radius: 50%;
-  z-index: 2;
+  z-index: 4;
 }
 
-#startmodal {
+.startmodal {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-#startmodal #start {
+.startmodal #startBtn {
   background-color: #777;
   width: 400px;
   padding: 10px 0;
@@ -102,12 +109,12 @@ header h1{
   opacity: 0.8;
 }
 
-#startmodal #start:hover {
+.startmodal #startBtn:hover {
   transform: scale(1.05);
   opacity: 0.95;
 }
 
-#startmodal #start p{
+.startmodal #startBtn p{
   font-size: 18px;
 }
 
@@ -120,42 +127,51 @@ header h1{
   display: block;
 }
 
-.finish-modal .finish-tape{
+.finish-tape{
   position: absolute;
-  width: 0px;
+  left: -5%;
+  width: 110%;
   height: 50px;
   overflow: hidden;
   background-color: rgb(235, 63, 233);
-  transition: 0.3s ease-in-out;
   line-height: 50px;
+  transition: 0.5s ease-in-out;
 }
 
-.finish-modal #f1 {
-  transform: rotate(15deg);
-  top: 30%;
-  left: -5%;
-}
-
-.finish-modal #f2 {
-  transform: rotate(-20deg);
+.finish-tape-1 {
+  transform: translate(-200%) rotate(15deg);
   top: 10%;
-  right: -5%;
 }
 
-.finish-modal #f3 {
-  transform: rotate(-20deg);
+.finish-tape-2 {
+  transform: translate(200%) rotate(-20deg) ;
+  top: 30%;
+}
+
+.finish-tape-3 {
+  transform: translate(-200%) rotate(-20deg);
   top: 50%;
-  left: -5%;
 }
 
-.finish-modal #f4 {
-  transform: rotate(-3deg);
+.finish-tape-4 {
+  transform: translate(200%) rotate(10deg);
   top: 80%;
-  right: -5%;
 }
 
-.finish-modal .finish-tape.active{
-  width: 110%;
+.finish-tape-1.active {
+  transform: rotate(15deg);
+}
+
+.finish-tape-2.active {
+  transform: rotate(-20deg);
+}
+
+.finish-tape-3.active {
+  transform: rotate(-20deg);
+}
+
+.finish-tape-4.active {
+  transform: rotate(-3deg);
 }
 
 #resultModal {
@@ -169,7 +185,7 @@ header h1{
   transform: translateY(0);
 }
 
-#resultModal #retry {
+#resultModal #retryBtn {
   background-color: #777;
   width: 400px;
   margin: 100px auto 0;
@@ -179,7 +195,7 @@ header h1{
   opacity: 0.9;
 }
 
-#resultModal #retry:hover {
+#resultModal #retryBtn:hover {
   transform: scale(1.05);
   opacity: 0.95;
 }
@@ -205,14 +221,14 @@ header h1{
   transition: 1s ease-in-out;
 }
 
-#resultModal #bar #hit{
+#resultModal #bar #success{
   background-color: #16D819;
   border-radius: 35px 0 0 35px;
   text-align: left;
 
 }
 
-#resultModal #bar #left{
+#resultModal #bar #remained{
   background-color: #EF2E7F;
   border-radius: 0 35px 35px 0;
   text-indent: -100px;
@@ -232,7 +248,6 @@ header h1{
   height: 200px;
   margin: 0 auto;
   padding: 10px;
-  background-image: url(../img/pink1.png);
   background-position: center;
   background-size: contain;
   font-size: 20px;
@@ -245,8 +260,7 @@ header h1{
   z-index: 2;
 }
 
-.target.clear {
-  background-image: url(../img/green1.png);
+.target.break {
   background-position: center;
   background-size: contain;
   transform: scale(1.1) rotate(5deg);
@@ -271,17 +285,42 @@ header h1{
   border-radius: 4px;
 }
 
-.target .roma-target .img-span {
+.break-letter {
   position: relative;
   color: transparent;
 }
 
-.target .roma-target .img-span img{
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -30%);
+.break-letter:after{
+  content: '';
   width: 45px;
+  height: 45px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-80%, -50%);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.break-letter-1:after {
+  background-image: url(../img/green1.png);
+}
+
+.break-letter-2:after {
+  background-image: url(../img/green2.png);
+}
+
+.break-letter-3:after {
+  background-image: url(../img/green3.png);
+}
+
+.break-letter-4:after {
+  background-image: url(../img/green4.png);
+}
+
+.break-letter-5:after {
+  background-image: url(../img/green5.png);
 }
 
 .paint-ball {
@@ -297,7 +336,6 @@ header h1{
   top: 100%;
   left: 50%;
   transform: translate(-50%, -30%);
-  z-index: 3;
 }
 
 .paint-ball.hit {
@@ -329,6 +367,9 @@ footer {
   font-weight: lighter;
 }
 
+/* ===================================================== */
+/* 画面幅が小さい時 */
+/* ===================================================== */
 @media screen and (max-width: 768px) {
   body {
     margin: 50px 0 0;
@@ -365,6 +406,4 @@ footer {
   .notes h2{
     font-size: 1.4em;
   }
-
-
 }
