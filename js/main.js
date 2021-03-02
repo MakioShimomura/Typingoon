@@ -269,9 +269,7 @@
     // 変数の初期化
     loc = 0;
     focus = false;
-    gHira = [];
-    gRoma = [];
-    gtargetId = [];
+    generatedTarget = [];
     targetId = 0;
     focusNum = 0;
     generatedTargetCount = 0;
