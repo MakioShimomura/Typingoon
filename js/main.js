@@ -4,8 +4,8 @@
   // =====================================================
   // 定数の定義
   // =====================================================
-  // hiraとromaはインデックスで対応している
-  const hira = [
+  // japaneseSyllabaryHiraganaとjapaneseSyllabaryRomaはインデックスで対応している
+  const japaneseSyllabaryHiragana = [
     'あ',
     'い',
     'う',
@@ -80,7 +80,7 @@
     'ー',
   ];
 
-  const roma = [
+  const japaneseSyllabaryRoma = [
     'a',
     'i',
     'u',
@@ -205,41 +205,43 @@
     'みち',
     'たおる',
     'ころな',
-    'えいちーむ',
     'てんき',
     'あし',
     'ぞんび',
     'ばすけ',
+    'びーる',
+    'かれー',
+    'ぷりんと',
+    'ふるぐら',
+    'ぐりとぐら',
+    'おうえん',
+    'とーすたー',
+    'ほうどう',
+    'さとう',
+    'わくちん',
+    'ちくわ',
+    'あれるぎー',
+    'ふくさよう',
   ]
   const limitTime = 30 * 1000;  //プレイ時間の設定
 
   // =====================================================
   // 変数の定義
   // =====================================================
-  let hiraWord;             //問題の文字列を入れる変数
-  let romaWord;             //ローマ字の文字列を入れる変数
   let loc = 0;              //単語の中でこれから入力するローマ字の文字数目
   let focus = false;        //入力している単語があるかどうか判定
-  let gHira = [];           //残っている単語
-  let gRoma = [];           //残っている単語のローマ字
-  let targetId = [];        //要素のId
+  let generatedTarget = [];
   let focusNum;             //現在入力されている文字のgHira配列でのindex
   let playingNow = false;   //ゲーム中かどうか判定
   let remainedTime;         //残り時間の計測
   let startTime;            //ゲームスタートの時間を記憶
-  let id;                   //生成された順番を記憶しておく
+  let targetId;                   //生成された順番を記憶しておく
   let timeoutId;            //setTimeoutの戻り値を格納
-  let generateTargetCount;  //生成したターゲットをカウントする
+  let generatedTargetCount;  //生成したターゲットをカウントする
   let breakTargetCount;     //打ち切ったターゲットをカウントする
   let rate;                 //成績を入れる
-  let target;               //生成するターゲットを記憶する
   let targetInner;          //生成するターゲットの中身を構築する
-  let targetPositionLeft;   //ターゲットを生成する位置（X座標）を指定
-  let targetPositionTop;    //ターゲットを生成する位置（Y座標）を指定
   let targetImgNum;         //ターゲットの画像の型番号を記憶
-  let paintBall;            //エフェクト用に生成されたペイントボールを記憶
-  let breakLetterTop;       //タイプされた1文字の位置（X座標）を格納
-  let breakLetterLeft;      //タイプされた1文字の位置（Y座標）を格納
   let updateTarget;         //更新するターゲットを記憶
   let remainWord;           //フォーカスされていてまだタイプしきれていない文字を格納
   let breakLetter;          //タイプした文字を格納
@@ -269,9 +271,10 @@
     focus = false;
     gHira = [];
     gRoma = [];
-    targetId = [];
+    gtargetId = [];
+    targetId = 0;
     focusNum = 0;
-    generateTargetCount = 0;
+    generatedTargetCount = 0;
     breakTargetCount = 0;
     // 要素の削除・スタイルのリセット
     while (targetWrap.firstChild) targetWrap.removeChild(targetWrap.firstChild);
@@ -316,69 +319,64 @@
   // ゲーム中に動作し続ける関数
   function targetGenerate() {
     if (playingNow === false) {
-      clearTimeout(id);
+      clearTimeout(timeoutId);
       return;
     }
-    id = setTimeout( () => {
+    timeoutId = setTimeout( () => {
       targetGenerate();
     }, 1500);
-    wordGenerate(id);
-  }
-  
-  // ターゲット生成のための関数
-  function wordGenerate (id) {
-    // 必要な情報の生成
-    hiraWord = hiraWords[Math.floor(Math.random() * hiraWords.length)];
-    wordHiraToRoma(hiraWord);
-    pushArray(hiraWord, romaWord, id);
-    generateTargetCount++;
-    // DOMを形成していく
-    target = document.createElement('div');
-    targetInner = `<p class="hira-target">${hiraWord}</p><p class="roma-target"><span class="remain-word">${romaWord}</span></p>`;
-    targetPositionLeft = Math.random() * targetWrap.offsetWidth * 0.8;
-    targetPositionTop = Math.random() * targetWrap.offsetHeight * 0.7;
-    targetImgNum = Math.floor(Math.random() * 5) + 1;
-    target.classList.add('target');
-    target.dataset.targetId = id;
-    target.style.backgroundImage = `url(img/pink${targetImgNum}.png)`;
-    target.style.top = `${targetPositionTop}px`;
-    target.style.left = `${targetPositionLeft}px`;
-    target.innerHTML = targetInner;
-    targetWrap.appendChild(target);
+    targetId++;
+    let newTarget = new Target({id: targetId});
+    generatedTarget.push(newTarget);
+    generatedTargetCount++;
   }
 
-  //letterHiraToRomaに一文字づつ渡してromaWordを生成する関数
-  function wordHiraToRoma (hiraWord) {
-    romaWord = '';
-    for (let i = 0; i <= hiraWord.length; i++) {
-      hiraLetter = hiraWord.slice(i, i + 1);
-      letterHiraToRoma(hiraLetter);
+  class Target {
+    constructor( {id} ) {
+      this.id = id;
+      this.hiraWord = hiraWords[Math.floor(Math.random() * hiraWords.length)];
+      this.romaWord = this.convertHiraganaToRoma(this.hiraWord);
+      this.targetPositionLeft = Math.random() * targetWrap.offsetWidth * 0.8;
+      this.targetPositionTop = Math.random() * targetWrap.offsetHeight * 0.7;
+      this.targetImgNum = Math.floor(Math.random() * 5) + 1;
+      this.generate();
     }
-  }
 
-  //1文字ずつひらがなからローマ字へ変換する関数
-  function letterHiraToRoma(hiraLetter) {
-    for (let i = 0; i < hira.length; i++) {
-      if (hira[i] === hiraLetter) {
-        romaWord += roma[i];
+    convertHiraganaToRoma(wordHiragana) {
+      let convertResult = '';
+      for (let i = 0; i <= wordHiragana.length; i++) {
+        let letterHiragana = wordHiragana.slice(i, i + 1);
+        for (let i = 0; i < japaneseSyllabaryHiragana.length; i++) {
+          if (japaneseSyllabaryHiragana[i] === letterHiragana) {
+            convertResult += japaneseSyllabaryRoma[i];
+          }
+        }
       }
+      return convertResult;
     }
-  }
 
-  // 生成した単語の情報を同じインデックスで3つの配列に格納する関数
-  function pushArray(hiraWord, romaWord, id) {
-    gHira.push(hiraWord);
-    gRoma.push(romaWord);
-    targetId.push(id);
+    generate() {
+      let targetTemplate = document.createElement('div');
+      // targetTemplateのスタイルを指定
+      targetTemplate.classList.add('target');
+      targetTemplate.dataset.targetId = this.id;
+      targetTemplate.style.backgroundImage = `url(img/pink${this.targetImgNum}.png)`;
+      targetTemplate.style.top = `${this.targetPositionTop}px`;
+      targetTemplate.style.left = `${this.targetPositionLeft}px`;
+      // taragetTemplateの中身を作成
+      targetInner = `<p class="hira-target">${this.hiraWord}</p><p class="roma-target"><span class="remain-word">${this.romaWord}</span></p>`;
+      targetTemplate.innerHTML = targetInner;
+      targetWrap.appendChild(targetTemplate);
+    }
   }
   
   // ゲーム中にタイプされたキーがあっているか判定する
   function keyCheck(typeKey) {
     focusCheck();
-    if (focus && gRoma[focusNum].slice(loc, loc + 1) === typeKey ) {//正誤判定
+    if (focus && generatedTarget[focusNum].romaWord.slice(loc, loc + 1) === typeKey ) { //正誤判定
       letterUpdate(focusNum, loc);
       loc++;
-      if (loc >= gRoma[focusNum].length) {//文字数に達したら初期化
+      if (loc >= generatedTarget[focusNum].romaWord.length) { //文字数に達したら初期化
         breakTargetCount++;
         nextTarget();
       }
@@ -388,13 +386,13 @@
   //フォーカスしているターゲットがあるか判定して、なかったらフォーカスさせる
   function focusCheck() {
     if (!focus) {
-      for (i = 0; i < gHira.length; i++) {  //残っている単語分繰り返し
-        if (typeKey === gRoma[i].slice(0, 1)) {   //タイプしたキーと単語の一文字目が同じだったら
+      for (i = 0; i < generatedTarget.length; i++) {  //残っている単語分繰り返し
+        if (typeKey === generatedTarget[i].romaWord.slice(0, 1)) {  //タイプしたキーと単語の一文字目が同じだったら
           focus = true;
           focusNum = i;
-          focusTarget = document.querySelector(`div[data-target-id="${targetId[focusNum]}"]`);
+          focusTarget = document.querySelector(`div[data-target-id="${generatedTarget[focusNum].id}"]`);
           focusTarget.classList.add('focus');
-          i += gHira.length; //for文をでる処理
+          i += generatedTarget.length; //for文をでる処理
         }
       }
     }
@@ -402,28 +400,13 @@
 
   //タイプした文字を更新する処理
   function letterUpdate(focusNum, loc) {
-    updateTarget = document.querySelector(`div[data-target-id="${targetId[focusNum]}"] .roma-target`);
-    remainWord = document.querySelector(`div[data-target-id="${targetId[focusNum]}"] .roma-target .remain-word`)
+    updateTarget = document.querySelector(`div[data-target-id="${generatedTarget[focusNum].id}"] .roma-target`);
+    remainWord = document.querySelector(`div[data-target-id="${generatedTarget[focusNum].id}"] .roma-target .remain-word`);
     breakLetter = document.createElement('span');
     breakLetter.classList.add('break-letter', `break-letter-${Math.floor(Math.random() * 5) + 1}`);
-    breakLetter.textContent = gRoma[focusNum].slice(loc, loc + 1);
-    remainWord.textContent = gRoma[focusNum].substring(loc + 1);
+    breakLetter.textContent = generatedTarget[focusNum].romaWord.slice(loc, loc + 1);
+    remainWord.textContent = generatedTarget[focusNum].romaWord.substring(loc + 1);
     updateTarget.insertBefore(breakLetter, remainWord);
-
-    // ペンキを飛ばすエフェクト用
-    paintBall = document.createElement('div');
-    paintBall.classList.add('paint-ball');
-    targetWrap.appendChild(paintBall);
-    breakLetterTop = breakLetter.getBoundingClientRect().top - targetWrap.getBoundingClientRect().top;
-    breakLetterLeft = breakLetter.getBoundingClientRect().left - targetWrap.getBoundingClientRect().left;
-    setTimeout( () => {
-      paintBall.classList.add('hit');
-      paintBall.style.top = `${breakLetterTop}px`;
-      paintBall.style.left = `${breakLetterLeft}px`;
-      setTimeout( () => {
-        targetWrap.removeChild(paintBall);
-      }, 110);
-    }, 1);
   }
 
   // 打ち切ったターゲットを処理する関数
@@ -435,9 +418,7 @@
     while (focusTarget.firstChild) focusTarget.removeChild(focusTarget.firstChild);
     focus = false;
     loc = 0;
-    gHira.splice(focusNum, 1);
-    gRoma.splice(focusNum, 1);
-    targetId.splice(focusNum, 1);
+    generatedTarget.splice(focusNum, 1);
   }
   
   // ゲーム終了時のフィニッシュテープを処理する関数
@@ -454,7 +435,7 @@
   function result() {
     resultModal.classList.add('active');
     setTimeout( () => {
-      rate = (breakTargetCount / generateTargetCount * 100).toFixed(0);
+      rate = (breakTargetCount / generatedTargetCount * 100).toFixed(0);
       success.style.width = `${rate}%`;
       remained.style.width = `${100 - rate}%`;
       success.textContent = `${rate}%`;
