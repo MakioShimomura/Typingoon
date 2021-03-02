@@ -336,7 +336,7 @@
     target = document.createElement('div');
     targetInner = `<p class="hira-target">${hiraWord}</p><p class="roma-target"><span class="remain-word">${romaWord}</span></p>`;
     targetPositionLeft = Math.random() * targetWrap.offsetWidth * 0.8;
-    targetPositionTop = Math.random() * targetWrap.offsetHeight * 0.8 - 50;
+    targetPositionTop = Math.random() * targetWrap.offsetHeight * 0.7;
     targetImgNum = Math.floor(Math.random() * 5) + 1;
     target.classList.add('target');
     target.dataset.targetId = id;
