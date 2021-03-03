@@ -1,12 +1,163 @@
 'user strict'
 
-import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
-
 {
   // =====================================================
   // 定数の定義
   // =====================================================
-  hiraWords = [ //タイピングさせたい単語（ひらがなのみ）
+
+  // japaneseSyllabaryHiraganaとjapaneseSyllabaryRomaはインデックスで対応している
+  const japaneseSyllabaryHiragana = [
+    'あ',
+    'い',
+    'う',
+    'え',
+    'お',
+    'か',
+    'き',
+    'く',
+    'け',
+    'こ',
+    'さ',
+    'し',
+    'す',
+    'せ',
+    'そ',
+    'た',
+    'ち',
+    'つ',
+    'て',
+    'と',
+    'な',
+    'に',
+    'ぬ',
+    'ね',
+    'の',
+    'は',
+    'ひ',
+    'ふ',
+    'へ',
+    'ほ',
+    'ま',
+    'み',
+    'む',
+    'め',
+    'も',
+    'や',
+    'ゆ',
+    'よ',
+    'ら',
+    'り',
+    'る',
+    'れ',
+    'ろ',
+    'わ',
+    'を',
+    'ん',
+    'が',
+    'ぎ',
+    'ぐ',
+    'げ',
+    'ご',
+    'ざ',
+    'じ',
+    'ず',
+    'ぜ',
+    'ぞ',
+    'だ',
+    'ぢ',
+    'づ',
+    'で',
+    'ど',
+    'ば',
+    'び',
+    'ぶ',
+    'べ',
+    'ぼ',
+    'ぱ',
+    'ぴ',
+    'ぷ',
+    'ぺ',
+    'ぽ',
+    'ー',
+  ];
+
+  const japaneseSyllabaryRoma = [
+    'a',
+    'i',
+    'u',
+    'e',
+    'o',
+    'ka',
+    'ki',
+    'ku',
+    'ke',
+    'ko',
+    'sa',
+    'si',
+    'su',
+    'se',
+    'so',
+    'ta',
+    'ti',
+    'tu',
+    'te',
+    'to',
+    'na',
+    'ni',
+    'nu',
+    'ne',
+    'no',
+    'ha',
+    'hi',
+    'hu',
+    'he',
+    'ho',
+    'ma',
+    'mi',
+    'mu',
+    'me',
+    'mo',
+    'ya',
+    'yu',
+    'yo',
+    'ra',
+    'ri',
+    'ru',
+    're',
+    'ro',
+    'wa',
+    'wo',
+    'nn',
+    'ga',
+    'gi',
+    'gu',
+    'ge',
+    'go',
+    'za',
+    'zi',
+    'zu',
+    'ze',
+    'zo',
+    'da',
+    'di',
+    'du',
+    'de',
+    'do',
+    'ba',
+    'bi',
+    'bu',
+    'be',
+    'bo',
+    'pa',
+    'pi',
+    'pu',
+    'pe',
+    'po',
+    '-',
+  ];
+
+  // タイプさせたい単語（ひらがなのみ）
+  hiraWords = [
     'はし',
     'きんし',
     'ほん',
@@ -74,42 +225,45 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
     'あれるぎー',
     'ふくさよう',
   ]
-  const limitTime = 30 * 1000;  //プレイ時間の設定
+
+  const limitTime = 30 * 1000;    // プレイ時間の設定
+  const targetGenerateTime = 1200  // ターゲットが出現する間隔
 
   // =====================================================
   // 変数の定義
   // =====================================================
-  let loc = 0;              //単語の中でこれから入力するローマ字の文字数目
-  let focus = false;        //入力している単語があるかどうか判定
-  let generatedTarget = [];
-  let focusNum;             //現在入力されている文字のgHira配列でのindex
-  let playingNow = false;   //ゲーム中かどうか判定
-  let remainedTime;         //残り時間の計測
-  let startTime;            //ゲームスタートの時間を記憶
-  let targetId;                   //生成された順番を記憶しておく
-  let timeoutId;            //setTimeoutの戻り値を格納
-  let generatedTargetCount;  //生成したターゲットをカウントする
-  let breakTargetCount;     //打ち切ったターゲットをカウントする
-  let rate;                 //成績を入れる
-  let targetInner;          //生成するターゲットの中身を構築する
-  let targetImgNum;         //ターゲットの画像の型番号を記憶
-  let updateTarget;         //更新するターゲットを記憶
-  let remainWord;           //フォーカスされていてまだタイプしきれていない文字を格納
-  let breakLetter;          //タイプした文字を格納
-  let focusTarget;          //フォーカスされているターゲットを記憶
+  let loc = 0;              // 単語の中でこれから入力するローマ字の文字数目
+  let focus = false;        // 入力している単語があるかどうか判定
+  let generatedTarget = []; // 生成したターゲットのインスタンスを記憶
+  let focusNum;             // 現在入力されている文字のgeneratedTargetでのindex
+  let playingNow = false;   // ゲーム中かどうか判定
+  let remainedTime;         // 残り時間の計測
+  let startTime;            // ゲームスタートの時間を記憶
+  let targetId;             // 生成された順番にidを付与するために記憶
+  let timeoutId;            // setTimeoutの戻り値を格納
+  let generatedTimeoutId;
+  let generatedTargetCount; // 生成したターゲットをカウントする
+  let breakTargetCount;     // 打ち切ったターゲットをカウントする
+  let rate;                 // 成績を入れる
+  let targetInner;          // 生成するターゲットの中身を構築する
+  let targetImgNum;         // ターゲットの画像の型番号を記憶
+  let updateTarget;         // 更新するターゲットを記憶
+  let remainWord;           // フォーカスされていてまだタイプしきれていない文字を格納
+  let breakLetter;          // タイプした文字を格納
+  let focusTarget;          // フォーカスされているターゲットを記憶
 
   //=====================================================
   // 要素の取得
   //=====================================================
-  const targetWrap = document.getElementById('targetWrap');
-  const timerLabel = document.getElementById('timer');
-  const startBtn = document.getElementById('startBtn');
-  const finishModal = document.getElementById('finishModal');
-  const resultModal = document.getElementById('resultModal');
-  const retryBtn = document.getElementById('retryBtn');
-  const success = document.getElementById('success');
-  const remained = document.getElementById('remained');
-  const finishTape = document.querySelectorAll('.finish-tape');
+  const $targetWrap = document.getElementById('targetWrap');
+  const $timerLabel = document.getElementById('timer');
+  const $startBtn = document.getElementById('startBtn');
+  const $finishModal = document.getElementById('finishModal');
+  const $resultModal = document.getElementById('resultModal');
+  const $retryBtn = document.getElementById('retryBtn');
+  const $success = document.getElementById('success');
+  const $remained = document.getElementById('remained');
+  const $finishTape = document.querySelectorAll('.finish-tape');
   
   // =========================================================
   // 関数の定義
@@ -126,36 +280,34 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
     generatedTargetCount = 0;
     breakTargetCount = 0;
     // 要素の削除・スタイルのリセット
-    while (targetWrap.firstChild) targetWrap.removeChild(targetWrap.firstChild);
-    success.style.width = '0%';
-    remained.style.width = '0%';
-    success.textContent = '0%';
-    remained.textContent = '0%';
-    finishTape.forEach( e => {
+    while ($targetWrap.firstChild) $targetWrap.removeChild($targetWrap.firstChild);
+    $success.style.width = '0%';
+    $remained.style.width = '0%';
+    $success.textContent = '0%';
+    $remained.textContent = '0%';
+    $finishTape.forEach( e => {
       e.classList.remove('active');
     });
-    finishModal.classList.remove('active');
-    resultModal.classList.remove('active');
+    $finishModal.classList.remove('active');
+    $resultModal.classList.remove('active');
     
     playingNow = true;
     startTime = Date.now();
     updateTimer();
-    setTimeout( () => {
-      targetGenerate();
-    }, 1000);
+    targetGenerate();
   }
   
   // 時間の計測・残り時間が0のときにゲームを終了させる関数
   function updateTimer() {
     remainedTime = startTime + limitTime - Date.now();
-    timerLabel.textContent = (remainedTime / 1000).toFixed(0);
+    $timerLabel.textContent = (remainedTime / 1000).toFixed(0);
 
     timeoutId = setTimeout( () => {
       updateTimer();
     }, 1000);
 
     if (remainedTime < 0) {
-      timerLabel.textContent = 0;
+      $timerLabel.textContent = 0;
       playingNow = false;
       clearTimeout(timeoutId);
       finish();
@@ -170,10 +322,13 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
     if (playingNow === false) {
       clearTimeout(timeoutId);
       return;
+    } else if (remainedTime < 3000) {
+      clearTimeout(generatedTimeoutId);
+      return;
     }
-    timeoutId = setTimeout( () => {
+    generatedTimeoutId = setTimeout( () => {
       targetGenerate();
-    }, 1500);
+    }, targetGenerateTime);
     targetId++;
     let newTarget = new Target({id: targetId});
     generatedTarget.push(newTarget);
@@ -185,8 +340,8 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
       this.id = id;
       this.hiraWord = hiraWords[Math.floor(Math.random() * hiraWords.length)];
       this.romaWord = this.convertHiraganaToRoma(this.hiraWord);
-      this.targetPositionLeft = Math.random() * targetWrap.offsetWidth * 0.8;
-      this.targetPositionTop = Math.random() * targetWrap.offsetHeight * 0.7;
+      this.targetPositionLeft = Math.random() * $targetWrap.offsetWidth * 0.8;
+      this.targetPositionTop = Math.random() * $targetWrap.offsetHeight * 0.7;
       this.targetImgNum = Math.floor(Math.random() * 5) + 1;
       this.generate();
     }
@@ -215,7 +370,7 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
       // taragetTemplateの中身を作成
       targetInner = `<p class="hira-target">${this.hiraWord}</p><p class="roma-target"><span class="remain-word">${this.romaWord}</span></p>`;
       targetTemplate.innerHTML = targetInner;
-      targetWrap.appendChild(targetTemplate);
+      $targetWrap.appendChild(targetTemplate);
     }
   }
   
@@ -272,9 +427,9 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
   
   // ゲーム終了時のフィニッシュテープを処理する関数
   function finish() {
-    finishModal.classList.add('active');
+    $finishModal.classList.add('active');
     setTimeout( () => {
-      finishTape.forEach( e => {
+      $finishTape.forEach( e => {
         e.classList.add('active');
       });
     }, 300);
@@ -282,13 +437,13 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
 
   // ゲーム終了後結果を表示する関数
   function result() {
-    resultModal.classList.add('active');
+    $resultModal.classList.add('active');
     setTimeout( () => {
       rate = (breakTargetCount / generatedTargetCount * 100).toFixed(0);
-      success.style.width = `${rate}%`;
-      remained.style.width = `${100 - rate}%`;
-      success.textContent = `${rate}%`;
-      remained.textContent = `${100 - rate}%`;
+      $success.style.width = `${rate}%`;
+      $remained.style.width = `${100 - rate}%`;
+      $success.textContent = `${rate}%`;
+      $remained.textContent = `${100 - rate}%`;
     }, 1000);
   }
 
@@ -297,10 +452,10 @@ import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
   //=====================================================
 
   // スタート・リスタートボタンをクリックした時の処理
-  startBtn.addEventListener('click', () => {
+  $startBtn.addEventListener('click', () => {
     gameStart();
   });
-  retryBtn.addEventListener('click', () => {
+  $retryBtn.addEventListener('click', () => {
     gameStart();
   });
   // キーを押した時の処理

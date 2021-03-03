@@ -260,6 +260,33 @@ header h1{
   z-index: 2;
 }
 
+.target.focus::after {
+  content: '';
+  position: absolute;
+  display: block;
+  border: 6px dashed skyblue;
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  top: 50%;
+  left: 50%;
+  animation: focusTarget 1.7s ease 0s infinite normal;
+}
+
+@keyframes focusTarget {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.15) rotate(180deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(360deg);
+  }
+}
+
 .target.break {
   background-position: center;
   background-size: contain;
