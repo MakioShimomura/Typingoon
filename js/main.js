@@ -1,6 +1,6 @@
 'user strict'
 
-import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable";
+import {japaneseSyllabaryHiragana, japaneseSyllabaryRoma} from "./valiable.js";
 
 {
   // =====================================================
